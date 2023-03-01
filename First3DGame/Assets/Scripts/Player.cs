@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private CharacterController controller;
+    private Animator anim;
     public float speed;
     public float gravity;
 
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        anim = GetComponent<Animator>();
         cam = Camera.main.transform;
     }
 
@@ -26,6 +28,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         Move();
+        //GetMouseInput();
     }
 
     void Move(){
@@ -43,13 +46,25 @@ public class Player : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
 
                 moveDirection = Quaternion.Euler(0f, angle, 0f) * Vector3.forward * speed;
+                anim.SetInteger("transition",1);
             }
             else{
                 moveDirection = Vector3.zero;
+                anim.SetInteger("transition",0);
             }
         }
 
         moveDirection.y -= gravity * Time.deltaTime;
         controller.Move(moveDirection * Time.deltaTime);
     }
+
+    /*
+    void GetMouseInput(){
+        if(controller.isGrounded){
+            if(Input.GetMouseButtonDown(0)){
+                anim.SetInteger("transition",2);
+            }
+        }
+    }
+    */
 }

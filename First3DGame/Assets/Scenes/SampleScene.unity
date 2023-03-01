@@ -8279,6 +8279,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  gravity: 150
   smoothRotTime: 0.1
 --- !u!1001 &3622049193929176703
 PrefabInstance:

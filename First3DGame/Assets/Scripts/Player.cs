@@ -6,8 +6,11 @@ public class Player : MonoBehaviour
 {
     private CharacterController controller;
     public float speed;
+    public float gravity;
 
     private Transform cam;
+
+    private Vector3 moveDirection;
 
     public float smoothRotTime;
     private float turnSmoothVelocity;
@@ -22,20 +25,31 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        Move();
+    }
 
-        Vector3 direction = new Vector3(horizontal, 0f, vertical);
+    void Move(){
+        //Detecta se está encostando no chão. Original da classe.
+        if(controller.isGrounded){
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
 
-        if(direction.magnitude > 0){
-            float angle = Mathf.Atan2(direction.x,direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-            float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, angle, ref turnSmoothVelocity, smoothRotTime);
-           
-            transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
+            Vector3 direction = new Vector3(horizontal, 0f, vertical);
 
-            Vector3 moveDirection = Quaternion.Euler(0f, angle, 0f) * Vector3.forward;
+            if(direction.magnitude > 0){
+                float angle = Mathf.Atan2(direction.x,direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+                float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, angle, ref turnSmoothVelocity, smoothRotTime);
+            
+                transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
 
-            controller.Move(moveDirection * speed * Time.deltaTime);
+                moveDirection = Quaternion.Euler(0f, angle, 0f) * Vector3.forward * speed;
+            }
+            else{
+                moveDirection = Vector3.zero;
+            }
         }
+
+        moveDirection.y -= gravity * Time.deltaTime;
+        controller.Move(moveDirection * Time.deltaTime);
     }
 }

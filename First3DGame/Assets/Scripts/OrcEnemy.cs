@@ -19,6 +19,10 @@ public class OrcEnemy : MonoBehaviour
     [Header("Others")]
     private Transform player;
 
+
+    private bool walking;
+    private bool attacking;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,7 +39,30 @@ public class OrcEnemy : MonoBehaviour
         float distance = Vector3.Distance(player.position, transform.position);
 
         if(distance <= lookRadius){
-            Debug.Log("Player detected");
+            agent.isStopped = false;
+            if(!attacking){
+                agent.SetDestination(player.position);
+                anim.SetBool("Walk Forward", true);
+                walking = true;
+            }
+            
+            //Attack=========
+            if(distance <= agent.stoppingDistance){
+                agent.isStopped = true;
+                anim.SetBool("Walk Forward", false);
+                //Attack method
+
+            }
+            else{
+                attacking = false;
+            }
+            //===============
+        }
+        else{
+            agent.isStopped = true;
+            anim.SetBool("Walk Forward", false);
+            walking = false;
+            attacking = false;
         }
     }
 

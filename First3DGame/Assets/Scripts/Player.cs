@@ -114,7 +114,7 @@ public class Player : MonoBehaviour
     }
 
     private void OnDrawGizmosSelected(){
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position + transform.forward + transform.up, colliderRadius);
     }
 }

@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
 
     private bool isRunning;
 
+    public float damage = 20f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -97,7 +99,10 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.4f);
         GetEnemiesList();
         foreach(Transform enemies in enemyList){
-            Debug.Log(enemies.name);
+            OrcEnemy enemy = enemies.GetComponent<OrcEnemy>();
+            if(enemy != null){
+                enemy.GetHit(damage);
+            }
         }
         yield return new WaitForSeconds(1f);
         anim.SetInteger("transition",0);

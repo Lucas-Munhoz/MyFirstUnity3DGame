@@ -22,6 +22,11 @@ public class OrcEnemy : MonoBehaviour
     [Header("Others")]
     private Transform player;
 
+    [Header("WayPoints")]
+    public List<Transform> wayPoints = new List<Transform>();
+    public int currentPathIndex;
+    public float pathDistance;
+
     private float colliderRadius = 1.3f;
     private bool walking;
     private bool attacking;
@@ -67,11 +72,25 @@ public class OrcEnemy : MonoBehaviour
                 //===============
             }
             else{
-                agent.isStopped = true;
                 anim.SetBool("Walk Forward", false);
                 walking = false;
                 attacking = false;
+                MoveToWayPoint();
             }
+        }
+    }
+
+    void MoveToWayPoint(){
+        if(wayPoints.Count > 0){
+            float distance = Vector3.Distance(wayPoints[currentPathIndex].position, transform.position);
+            agent.destination = wayPoints[currentPathIndex].position;
+
+            if(distance <= pathDistance){
+                currentPathIndex = Random.Range(0, wayPoints.Count);
+            }
+
+            anim.SetBool("Walk Forward", true);
+            walking = true;
         }
     }
 

@@ -7,7 +7,7 @@ public class OrcEnemy : MonoBehaviour
 {
     [Header("Atributtes")]
     public float totalHealth = 150f;
-    public float attackDamage;
+    public float attackDamage = 65;
     public float movementSpeed;
     public float rotationSpeed;
     public float lookRadius;
@@ -25,7 +25,8 @@ public class OrcEnemy : MonoBehaviour
     private float colliderRadius = 1.3f;
     private bool walking;
     private bool attacking;
-    private bool hiting;
+    private bool isHitting;
+    private bool playerisDead;
 
     private bool waitFor;
 
@@ -75,7 +76,7 @@ public class OrcEnemy : MonoBehaviour
     }
 
     IEnumerator Attack(){
-        if(waitFor == false && hiting == false){
+        if(waitFor == false && isHitting == false && playerisDead == false){
             waitFor = true;
             attacking = true;
             walking = false;
@@ -86,13 +87,21 @@ public class OrcEnemy : MonoBehaviour
             yield return new WaitForSeconds(1.5f);
             waitFor = false;
         }
+
+        if(playerisDead){
+            anim.SetBool("Walk Forward", false);
+            walking = false;
+            attacking = false;
+            agent.isStopped = true;
+        }
         
     }
 
     void GetPlayerToAttack(){
         foreach(Collider c in Physics.OverlapSphere((transform.position + transform.forward * colliderRadius), colliderRadius)){
             if(c.gameObject.CompareTag("Player")){
-                Debug.Log("Attack");
+                c.gameObject.GetComponent<Player>().GetHit(attackDamage);
+                playerisDead = c.gameObject.GetComponent<Player>().isDead;
             }
         }
     }
@@ -102,7 +111,7 @@ public class OrcEnemy : MonoBehaviour
         if(totalHealth > 0){
             StopCoroutine("Attack");
             anim.SetTrigger("Take Damage");
-            hiting = true;
+            isHitting = true;
             StartCoroutine("RecoveryFromHit");
         }
         else{
@@ -113,7 +122,7 @@ public class OrcEnemy : MonoBehaviour
     IEnumerator RecoveryFromHit(){
         yield return new WaitForSeconds(1f);
         anim.SetBool("Walk Forward", false);
-        hiting = false;
+        isHitting = false;
         waitFor = false;
     }
 
